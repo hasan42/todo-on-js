@@ -1,0 +1,8 @@
+.todo {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.todo-list ul li.no-active {
+  text-decoration: line-through;
+  color: grey;
+}
