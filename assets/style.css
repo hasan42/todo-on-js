@@ -6,3 +6,6 @@
   text-decoration: line-through;
   color: grey;
 }
+.error-msg {
+  color: red;
+}

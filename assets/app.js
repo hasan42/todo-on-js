@@ -11,7 +11,7 @@ class Todo {
   todos = []; // array todo
   listTodo = null; // element list
 
-  // formAdd = null; // form add
+  formAdd = null; // form add
   formAddInput = null; // form add input
   formAddBtn = null; //form add btn
 
@@ -33,7 +33,6 @@ class Todo {
   }
 
   addTodoListItem(todo){
-    console.log(todo)
     let elem = document.createElement('li');
     elem.append(`${todo.id} ${todo.text}`);
 
@@ -72,25 +71,48 @@ class Todo {
   }
 
   createForm(){
-    // this.formAdd = document.forms.addTodo;
-    // this.formAddInput = this.formAdd.elements.text;
-    // this.formAddBtn = this.formAdd.elements.add;
+    this.formAdd = document.getElementById("todo-add");
     this.formAddInput = document.getElementById("addTodoText");
     this.formAddBtn = document.getElementById("addTodoBtn");
 
     this.formAddBtn.addEventListener('click',this.onClickAddNewTodo.bind(this));
+    this.formAddInput.addEventListener('keyup',(event)=>{
+      if (event.keyCode === 13) {
+        this.onClickAddNewTodo.call(this);
+      }
+    });
   }
 
   onClickAddNewTodo(){
+    let newTodoText = this.formAddInput.value.trim();
+    if(this.formAddInput.value.length <= 0){
+      let errorMsg = document.querySelector('.error-msg');
+      if(!errorMsg){
+        errorMsg = document.createElement('p');
+        errorMsg.classList.add('error-msg');
+        errorMsg.append('Error: Text is empty!');
+        this.formAdd.append(errorMsg);
+      }
+      return;
+    }else{
+      let errorMsg = document.querySelector('.error-msg');
+      if(errorMsg){
+        errorMsg.remove();
+      }
+    }
+
     let newTodoId = this.getMaxId() + 1;
-    let newTodoText = this.formAddInput.value;
+
     let obj = {
       id: newTodoId,
       text: newTodoText, 
       active: true
     };
-    this.todos.push(obj);
 
+    this.formAddInput.value = '';
+    this.formAddInput.blur();
+
+    this.todos.push(obj);
     this.listTodo.append( this.addTodoListItem(obj) );
   }
 
