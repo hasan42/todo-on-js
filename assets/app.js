@@ -35,7 +35,7 @@ class Todo {
   addTodoListItem(todo){
     let elem = document.createElement('li');
     elem.append(`${todo.id} ${todo.text}`);
-
+console.log(typeof elem)
     let delBtn = document.createElement('button');
     delBtn.append('del');
     delBtn.addEventListener('click',this.onClickDelTodo.bind(this,{id:todo.id, elem:elem}));
@@ -67,7 +67,46 @@ class Todo {
     event.stopPropagation();
   }
   onClickEditTodo(params){
+    let todo = this.todos.find((todo)=>todo.id===params.id);
+    params.elem.innerHTML = '';
+
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'todoEdit'
+    input.value = todo.text;
+    params.elem.append(input);
+
+    let btn = document.createElement('button');
+    btn.append('save');
+    btn.addEventListener('click',this.onClickSaveTodo.bind(this,{id:todo.id, elem:params.elem}));
+    params.elem.append(btn);
+
     event.stopPropagation();
+  }
+  onClickSaveTodo(params){
+    let todo = this.todos.find((todo)=>todo.id===params.id);
+    let editText = document.getElementById("todoEdit");
+    todo.text = editText.value;
+
+    params.elem.innerHTML = '';
+
+    params.elem.append(`${todo.id} ${todo.text}`);
+
+    let delBtn = document.createElement('button');
+    delBtn.append('del');
+    delBtn.addEventListener('click',this.onClickDelTodo.bind(this,{id:todo.id, elem:params.elem}));
+    params.elem.append(delBtn);
+
+    let editBtn = document.createElement('button');
+    editBtn.append('edit');
+    editBtn.addEventListener('click',this.onClickEditTodo.bind(this,{id:todo.id, elem:params.elem}));
+    params.elem.append(editBtn);
+
+    if(todo.active === false){
+      params.elem.classList.add('no-active');
+    }
+    params.elem.addEventListener('click',this.onClickTodo.bind(this, {id:todo.id, elem:params.elem}));
+
   }
 
   createForm(){
@@ -86,19 +125,10 @@ class Todo {
   onClickAddNewTodo(){
     let newTodoText = this.formAddInput.value.trim();
     if(this.formAddInput.value.length <= 0){
-      let errorMsg = document.querySelector('.error-msg');
-      if(!errorMsg){
-        errorMsg = document.createElement('p');
-        errorMsg.classList.add('error-msg');
-        errorMsg.append('Error: Text is empty!');
-        this.formAdd.append(errorMsg);
-      }
+      this.createError();
       return;
     }else{
-      let errorMsg = document.querySelector('.error-msg');
-      if(errorMsg){
-        errorMsg.remove();
-      }
+      this.removeError();
     }
 
     let newTodoId = this.getMaxId() + 1;
@@ -114,6 +144,22 @@ class Todo {
 
     this.todos.push(obj);
     this.listTodo.append( this.addTodoListItem(obj) );
+  }
+
+  createError(){
+    let errorMsg = document.querySelector('.error-msg');
+    if(!errorMsg){
+      errorMsg = document.createElement('p');
+      errorMsg.classList.add('error-msg');
+      errorMsg.append('Error: Text is empty!');
+      this.formAdd.append(errorMsg);
+    }
+  }
+  removeError(){
+    let errorMsg = document.querySelector('.error-msg');
+    if(errorMsg){
+      errorMsg.remove();
+    }
   }
 
   getMaxId(){
