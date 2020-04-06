@@ -35,7 +35,6 @@ class Todo {
   addTodoListItem(todo){
     let elem = document.createElement('li');
     elem.append(`${todo.id} ${todo.text}`);
-console.log(typeof elem)
     let delBtn = document.createElement('button');
     delBtn.append('del');
     delBtn.addEventListener('click',this.onClickDelTodo.bind(this,{id:todo.id, elem:elem}));
@@ -67,6 +66,7 @@ console.log(typeof elem)
     event.stopPropagation();
   }
   onClickEditTodo(params){
+    event.stopPropagation();
     let todo = this.todos.find((todo)=>todo.id===params.id);
     params.elem.innerHTML = '';
 
@@ -74,6 +74,7 @@ console.log(typeof elem)
     input.type = 'text';
     input.id = 'todoEdit'
     input.value = todo.text;
+    input.addEventListener('click',()=>{event.stopPropagation()} );
     params.elem.append(input);
 
     let btn = document.createElement('button');
@@ -81,9 +82,9 @@ console.log(typeof elem)
     btn.addEventListener('click',this.onClickSaveTodo.bind(this,{id:todo.id, elem:params.elem}));
     params.elem.append(btn);
 
-    event.stopPropagation();
   }
   onClickSaveTodo(params){
+    event.stopPropagation();
     let todo = this.todos.find((todo)=>todo.id===params.id);
     let editText = document.getElementById("todoEdit");
     todo.text = editText.value;
@@ -105,7 +106,6 @@ console.log(typeof elem)
     if(todo.active === false){
       params.elem.classList.add('no-active');
     }
-    params.elem.addEventListener('click',this.onClickTodo.bind(this, {id:todo.id, elem:params.elem}));
 
   }
 
